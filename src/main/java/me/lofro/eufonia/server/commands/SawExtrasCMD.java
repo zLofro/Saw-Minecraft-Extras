@@ -33,12 +33,14 @@ public class SawExtrasCMD {
             players.forEach(player -> {
                 player.getHungerManager().add(level, level);
 
-                if (players.size() > 1) {
-                    commandContext.getSource().sendFeedback(ChatFormatter.stringFormatWithPrefixToText("&7La saturación de &6" + players.size() + " &7 jugadores ha sido modificada correctamente."), true);
-                } else {
+                if (players.size() < 1) {
                     commandContext.getSource().sendFeedback(ChatFormatter.stringFormatWithPrefixToText("&7La saturación del jugador &6" + player.getName().asString() + " &7ha sido modificada correctamente."), true);
                 }
             });
+
+            if (players.size() > 1) {
+                commandContext.getSource().sendFeedback(ChatFormatter.stringFormatWithPrefixToText("&7La saturación de &6" + players.size() + " &7jugadores ha sido modificada correctamente."), true);
+            }
 
             return 1;
         } catch (Exception ex) {

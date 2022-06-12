@@ -4,9 +4,15 @@
   "package": "me.lofro.eufonia.server.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "EntityTrackerMixin",
     "HungerManagerMixin",
     "PlayerManagerMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "ProjectileEntityMixin",
+    "ServerPlayerEntityMixin",
+    "ServerPlayerInteractionManagerMixin",
+    "ServerPlayNetworkHandlerMixin",
+    "ServerWorldMixin",
+    "ThreadedAnvilChunkStorageMixin"
   ],
   "client": [
   ],
