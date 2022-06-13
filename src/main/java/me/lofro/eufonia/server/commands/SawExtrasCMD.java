@@ -31,7 +31,8 @@ public class SawExtrasCMD {
     public static int applySaturation(CommandContext<ServerCommandSource> commandContext, Collection<ServerPlayerEntity> players, int level) {
         try {
             players.forEach(player -> {
-                player.getHungerManager().add(level, level);
+                player.getHungerManager().setSaturationLevel(level);
+                player.getHungerManager().setSaturationLevel(level);
 
                 if (players.size() < 1) {
                     commandContext.getSource().sendFeedback(ChatFormatter.stringFormatWithPrefixToText("&7La saturación del jugador &6" + player.getName().asString() + " &7ha sido modificada correctamente."), true);
