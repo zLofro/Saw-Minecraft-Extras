@@ -8,12 +8,11 @@ import net.minecraft.world.GameMode;
 
 public class ServerPlayerStateEvents {
 
-    public interface OnPlayerChangeGamemode {
-        Event<ServerPlayerStateEvents.OnPlayerChangeGamemode> EVENT = EventFactory.createArrayBacked(ServerPlayerStateEvents.OnPlayerChangeGamemode.class,
-                (listeners) -> (player, gamemode) -> {
-
-                    for (ServerPlayerStateEvents.OnPlayerChangeGamemode listener : listeners) {
-                        ActionResult actionResult = listener.change(player, gamemode);
+    public interface OnPlayerChangeGameMode {
+        Event<OnPlayerChangeGameMode> EVENT = EventFactory.createArrayBacked(OnPlayerChangeGameMode.class,
+                (listeners) -> (player, gameMode) -> {
+                    for (OnPlayerChangeGameMode listener : listeners) {
+                        ActionResult actionResult = listener.change(player, gameMode);
 
                         if (actionResult != ActionResult.PASS) {
                             return actionResult;

@@ -15,7 +15,7 @@ public class GlobalServerListeners {
 
     private void registerCallbacks() {
         onPlayerJoined();
-        onPlayerChangeGamemode();
+        onPlayerChangeGameMode();
     }
 
     private void onPlayerJoined() {
@@ -31,8 +31,8 @@ public class GlobalServerListeners {
         });
     }
 
-    private void onPlayerChangeGamemode() {
-        ServerPlayerStateEvents.OnPlayerChangeGamemode.EVENT.register((player, prevGameMode) -> {
+    private void onPlayerChangeGameMode() {
+        ServerPlayerStateEvents.OnPlayerChangeGameMode.EVENT.register((player, prevGameMode) -> {
 
             Vanish.updatePlayer(player, prevGameMode);
 
