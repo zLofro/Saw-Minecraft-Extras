@@ -18,7 +18,7 @@ public class ProjectileEntityMixin {
     @Inject(method = "canHit", at = @At("HEAD"), cancellable = true)
     public void handleCanHitVanish(Entity entity, CallbackInfoReturnable<Boolean> cir) {
         if (!entity.isSpectator() && entity.isAlive() && entity.collides()) {
-            Entity entity2 = ((ProjectileEntity)(Object)this).getOwner();
+            Entity entity2 = ((ProjectileEntity)(Object) this).getOwner();
 
             if (entity2 instanceof ServerPlayerEntity && entity instanceof ServerPlayerEntity) {
                 if (!((IPlayer)entity2).canSeeOtherPlayer(entity)) cir.setReturnValue(false);

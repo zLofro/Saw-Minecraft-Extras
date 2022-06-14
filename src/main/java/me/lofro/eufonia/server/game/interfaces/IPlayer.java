@@ -8,34 +8,36 @@ public interface IPlayer {
     static boolean canSeeOtherPlayer(ServerPlayerEntity thisPlayer, ServerPlayerEntity otherPlayer) {
         if (otherPlayer == null) return true;
 
-        boolean enabled = enabled(thisPlayer);
+        IWorld thisPlayerWorld = (IWorld) thisPlayer.getWorld();
+        boolean vanishEnabled = thisPlayerWorld.vanishEnabled() && thisPlayer != otherPlayer;
 
         return canSeeOtherPlayer(
-            enabled,
+            vanishEnabled,
             thisPlayer.interactionManager.getGameMode(),
             otherPlayer.interactionManager.getGameMode(),
-            enabled && basedOnOp(thisPlayer) && thisPlayer != otherPlayer
+            vanishEnabled && thisPlayerWorld.advOnlySeesSrv()
         );
     }
 
-    static boolean canSeeOtherPlayer(boolean enabled, GameMode thisG, GameMode otherG, boolean basedOnOp) {
-        return !enabled || thisG == GameMode.CREATIVE || switch (otherG) {
+
+    /**
+     * <p>We define see* as the possibility for a player to know another player exists.
+     * This involves physically seeing the player, but also hearing sounds coming from them,
+     * rendering their particles, knowing if they are online, etc.
+     * <p>Players in {@code CREATIVE} can see* all players
+     * <p>Players in {@code SURVIVAL} can only see* players in {@code SURVIVAL} and {@code ADVENTURE}
+     * <p>Players in {@code SPECTATOR} can only see* players in {@code SURVIVAL} and {@code ADVENTURE}
+     * <p>Players in {@code ADVENTURE} can only see* players in {@code SURVIVAL}. They also may see*
+     * other players in {@code ADVENTURE} if {@code advOnlySeesSrv} is set to {@code false}.
+     * @return Whether the first person {@code thisPlayer} (whose game mode is {@code thisPlayer})
+     * is able to see the second person {@code otherPlayer} (whose game mode is {@code otherG})
+     */
+    static boolean canSeeOtherPlayer(boolean vanishEnabled, GameMode thisG, GameMode otherG, boolean advOnlySeesSrv) {
+        return !vanishEnabled || thisG == GameMode.CREATIVE || switch (otherG) {
             case SURVIVAL -> true;
-            case ADVENTURE -> !basedOnOp || thisG != GameMode.ADVENTURE;
-            //case SURVIVAL, ADVENTURE -> !basedOnOp || thisOp || otherOp;
+            case ADVENTURE -> thisG != GameMode.ADVENTURE || !advOnlySeesSrv;
             default -> false;
         };
-    }
-
-    static boolean enabled(ServerPlayerEntity player) {
-        return switch (player.getWorld().getRegistryKey().getValue().toUnderscoreSeparatedString()) {
-            case "saw_forest", "saw_underground", "psicodelia_void_train" -> true;
-            default -> false;
-        };
-    }
-
-    static boolean basedOnOp(ServerPlayerEntity player) {
-        return player.getWorld().getRegistryKey().getValue().toUnderscoreSeparatedString().equals("saw_underground");
     }
 
     boolean canSeeOtherPlayer(ServerPlayerEntity otherPlayer);

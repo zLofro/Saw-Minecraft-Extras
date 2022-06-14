@@ -42,7 +42,14 @@ public class PlayerManagerMixin {
     }
 
     @Inject(method = "sendToAround", at = @At("HEAD"), cancellable = true)
-    public void addVanishImplementation(PlayerEntity player, double x, double y, double z, double distance, RegistryKey<World> worldKey, Packet<?> packet, CallbackInfo ci) {
+    public void addVanishImplementation(PlayerEntity player,
+                                        double x,
+                                        double y,
+                                        double z,
+                                        double distance,
+                                        RegistryKey<World> worldKey,
+                                        Packet<?> packet,
+                                        CallbackInfo ci) {
         players.forEach(p -> {
 
             if (player != null && !((IPlayer)p).canSeeOtherPlayer(player)) {
@@ -105,19 +112,4 @@ public class PlayerManagerMixin {
 
         ci.cancel();
     }
-
-    @Inject(method = "addToOperators", at = @At("TAIL"))
-    public void addOperatorVanish(GameProfile profile, CallbackInfo ci) {
-        var player = ((PlayerManager)(Object)this).getPlayer(profile.getId());
-
-        if (player != null) Vanish.updatePlayer(player, player.interactionManager.getGameMode());
-    }
-
-    @Inject(method = "removeFromOperators", at = @At("TAIL"))
-    public void removeOperatorVanish(GameProfile profile, CallbackInfo ci) {
-        var player = ((PlayerManager)(Object)this).getPlayer(profile.getId());
-
-        if (player != null) Vanish.updatePlayer(player, player.interactionManager.getGameMode());
-    }
-
 }

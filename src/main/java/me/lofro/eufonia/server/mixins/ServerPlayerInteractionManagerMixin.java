@@ -21,7 +21,7 @@ public class ServerPlayerInteractionManagerMixin implements IServerPlayerInterac
 
     @Inject(method = "changeGameMode", at = @At("HEAD"), cancellable = true)
     public void triggerChangeGameModeEvent(GameMode gameMode, CallbackInfoReturnable<Boolean> cir) {
-        GameMode prevGameMode = ((ServerPlayerInteractionManager) (Object) this).getGameMode();
+        GameMode prevGameMode = this.gameMode;
 
         if (gameMode == prevGameMode) {
             cir.setReturnValue(false);

@@ -31,7 +31,11 @@ public class ServerPlayNetworkHandlerMixin {
 
     // Hides chat messages sent by players without OP and sends messages sent by OPS to other OPS.
     @Redirect(method = "handleMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Ljava/util/function/Function;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V"))
-    public void filterChat(PlayerManager instance, Text serverMessage, Function<ServerPlayerEntity, Text> playerMessageFactory, MessageType type, UUID sender) {
+    public void filterChat(PlayerManager instance,
+                           Text serverMessage,
+                           Function<ServerPlayerEntity, Text> playerMessageFactory,
+                           MessageType type,
+                           UUID sender) {
         instance.getPlayerList().forEach(p -> {
             if (p.hasPermissionLevel(4)) {
                 var senderPlayer = instance.getPlayer(sender);

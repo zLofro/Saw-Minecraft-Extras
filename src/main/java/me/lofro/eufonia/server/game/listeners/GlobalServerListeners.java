@@ -20,8 +20,7 @@ public class GlobalServerListeners {
 
     private void onPlayerJoined() {
         ServerPlayerConnectionEvents.OnServerPlayerConnect.EVENT.register((player, server) -> {
-
-            player.getWorld().getPlayers().forEach(p -> {
+            player.server.getPlayerManager().getPlayerList().forEach(p -> {
                 if (player == p) return;
                 Vanish.hide(player, p);
                 Vanish.hide(p, player);
@@ -33,7 +32,6 @@ public class GlobalServerListeners {
 
     private void onPlayerChangeGameMode() {
         ServerPlayerStateEvents.OnPlayerChangeGameMode.EVENT.register((player, prevGameMode) -> {
-
             Vanish.updatePlayer(player, prevGameMode);
 
             return ActionResult.PASS;

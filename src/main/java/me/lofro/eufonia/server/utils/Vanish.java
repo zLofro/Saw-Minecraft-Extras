@@ -2,9 +2,12 @@ package me.lofro.eufonia.server.utils;
 
 import me.lofro.eufonia.server.game.interfaces.IPlayer;
 import me.lofro.eufonia.server.game.interfaces.IThreadedAnvilChunkStorage;
+import me.lofro.eufonia.server.game.interfaces.IWorld;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.GameMode;
+
+import java.util.function.Consumer;
 
 public class Vanish {
 
@@ -36,25 +39,56 @@ public class Vanish {
         }
     }
 
+    public static void updatePlayer(ServerPlayerEntity player, IWorld prevWorld) {
+        player.server.getPlayerManager().getPlayerList().forEach(updatePlayerDimensionChanged(player, prevWorld));
+    }
     public static void updatePlayer(ServerPlayerEntity player, GameMode prevGameMode) {
-        boolean isCreative = prevGameMode == GameMode.CREATIVE; // Optimization bypass
-        boolean enabled = IPlayer.enabled(player);
-        boolean isBasedOnOp = enabled && IPlayer.basedOnOp(player);
-        player.getWorld().getPlayers().forEach(p -> {
-            if (player == p) return;
+        player.server.getPlayerManager().getPlayerList().forEach(updatePlayerGameModeChanged(player, prevGameMode));
+    }
 
+    private static Consumer<ServerPlayerEntity> updatePlayerGameModeChanged(ServerPlayerEntity player, GameMode prevGameMode) {
+        IWorld playerWorld = (IWorld) player.getWorld();
+        boolean playerEnabled = playerWorld.vanishEnabled();
+        boolean playerEnabledAdvOnlySeesSrv = playerEnabled && playerWorld.advOnlySeesSrv();
+        return p -> {
+            if (player == p) return;
             GameMode pGameMode = p.interactionManager.getGameMode();
-            if (isCreative || IPlayer.canSeeOtherPlayer(enabled, prevGameMode, pGameMode, isBasedOnOp)) {
+
+            if (IPlayer.canSeeOtherPlayer(playerEnabled, prevGameMode, pGameMode, playerEnabledAdvOnlySeesSrv)) {
                 Vanish.hide(p, player);
             } else {
                 Vanish.show(p, player);
             }
-            if (IPlayer.canSeeOtherPlayer(enabled, pGameMode, prevGameMode, isBasedOnOp)) {
+
+            IWorld pWorld = (IWorld) p.getWorld();
+            if (IPlayer.canSeeOtherPlayer(pWorld.vanishEnabled(), pGameMode, prevGameMode, pWorld.advOnlySeesSrv())) {
                 Vanish.hide(player, p);
             } else {
                 Vanish.show(player, p);
             }
-        });
+        };
     }
 
+    private static Consumer<ServerPlayerEntity> updatePlayerDimensionChanged(ServerPlayerEntity player, IWorld prevWorld) {
+        GameMode playerGameMode = player.interactionManager.getGameMode();
+        boolean prevPlayerEnabled = prevWorld.vanishEnabled();
+        boolean prevPlayerEnabledAdvOnlySeesSrv = prevPlayerEnabled && prevWorld.advOnlySeesSrv();
+        return p -> {
+            if (player == p) return;
+            GameMode pGameMode = p.interactionManager.getGameMode();
+
+            if (IPlayer.canSeeOtherPlayer(prevPlayerEnabled, playerGameMode, pGameMode, prevPlayerEnabledAdvOnlySeesSrv)) {
+                Vanish.hide(p, player);
+            } else {
+                Vanish.show(p, player);
+            }
+
+            IWorld pWorld = (IWorld) p.getWorld();
+            if (IPlayer.canSeeOtherPlayer(pWorld.vanishEnabled(), pGameMode, playerGameMode, pWorld.advOnlySeesSrv())) {
+                Vanish.hide(player, p);
+            } else {
+                Vanish.show(player, p);
+            }
+        };
+    }
 }
