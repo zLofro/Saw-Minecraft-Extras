@@ -14,15 +14,15 @@ public interface IPlayer {
             enabled,
             thisPlayer.interactionManager.getGameMode(),
             otherPlayer.interactionManager.getGameMode(),
-            enabled && basedOnOp(thisPlayer) && thisPlayer != otherPlayer,
-            thisPlayer.hasPermissionLevel(4),
-            otherPlayer.hasPermissionLevel(4)
+            enabled && basedOnOp(thisPlayer) && thisPlayer != otherPlayer
         );
     }
 
-    static boolean canSeeOtherPlayer(boolean enabled, GameMode thisG, GameMode otherG, boolean basedOnOp, boolean thisOp, boolean otherOp) {
+    static boolean canSeeOtherPlayer(boolean enabled, GameMode thisG, GameMode otherG, boolean basedOnOp) {
         return !enabled || thisG == GameMode.CREATIVE || switch (otherG) {
-            case SURVIVAL, ADVENTURE -> !basedOnOp || thisOp || otherOp;
+            case SURVIVAL -> true;
+            case ADVENTURE -> !basedOnOp || thisG != GameMode.ADVENTURE;
+            //case SURVIVAL, ADVENTURE -> !basedOnOp || thisOp || otherOp;
             default -> false;
         };
     }

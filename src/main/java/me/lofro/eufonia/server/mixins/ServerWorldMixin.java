@@ -1,8 +1,11 @@
 package me.lofro.eufonia.server.mixins;
 
+import me.lofro.eufonia.SawExtras;
 import me.lofro.eufonia.server.game.interfaces.IPlayer;
+import me.lofro.eufonia.server.utils.Vanish;
 import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Final;
@@ -41,6 +44,14 @@ public class ServerWorldMixin {
         });
 
         ci.cancel();
+    }
+
+    @Inject(method = "addPlayer", at = @At("HEAD"))
+    public void handlePlayerChangeDimensionVanish(ServerPlayerEntity player, CallbackInfo ci) {
+
+        Vanish.updatePlayer(player, player.interactionManager.getGameMode());
+
+        SawExtras.LOGGER.info("SE LLAMA");
     }
 
 }

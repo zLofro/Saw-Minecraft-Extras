@@ -40,18 +40,16 @@ public class Vanish {
         boolean isCreative = prevGameMode == GameMode.CREATIVE; // Optimization bypass
         boolean enabled = IPlayer.enabled(player);
         boolean isBasedOnOp = enabled && IPlayer.basedOnOp(player);
-        boolean isOp = isBasedOnOp && isCreative || player.hasPermissionLevel(4);
         player.getWorld().getPlayers().forEach(p -> {
             if (player == p) return;
 
             GameMode pGameMode = p.interactionManager.getGameMode();
-            boolean pOp = isBasedOnOp && p.hasPermissionLevel(4);
-            if (isCreative || IPlayer.canSeeOtherPlayer(enabled, prevGameMode, pGameMode, isBasedOnOp, isOp, pOp)) {
+            if (isCreative || IPlayer.canSeeOtherPlayer(enabled, prevGameMode, pGameMode, isBasedOnOp)) {
                 Vanish.hide(p, player);
             } else {
                 Vanish.show(p, player);
             }
-            if (IPlayer.canSeeOtherPlayer(enabled, pGameMode, prevGameMode, isBasedOnOp, isOp, pOp)) {
+            if (IPlayer.canSeeOtherPlayer(enabled, pGameMode, prevGameMode, isBasedOnOp)) {
                 Vanish.hide(player, p);
             } else {
                 Vanish.show(player, p);

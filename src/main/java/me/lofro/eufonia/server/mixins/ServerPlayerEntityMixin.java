@@ -1,5 +1,6 @@
 package me.lofro.eufonia.server.mixins;
 
+import me.lofro.eufonia.SawExtras;
 import me.lofro.eufonia.server.game.interfaces.IPlayer;
 import me.lofro.eufonia.server.utils.Vanish;
 import net.minecraft.entity.Entity;
