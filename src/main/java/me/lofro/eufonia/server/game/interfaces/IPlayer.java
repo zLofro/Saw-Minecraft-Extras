@@ -2,6 +2,7 @@ package me.lofro.eufonia.server.game.interfaces;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.world.GameMode;
 
 public interface IPlayer {
@@ -12,10 +13,10 @@ public interface IPlayer {
         boolean vanishEnabled = thisPlayerWorld.vanishEnabled() && thisPlayer != otherPlayer;
 
         return canSeeOtherPlayer(
-            vanishEnabled,
-            thisPlayer.interactionManager.getGameMode(),
-            otherPlayer.interactionManager.getGameMode(),
-            vanishEnabled && thisPlayerWorld.advOnlySeesSrv()
+                vanishEnabled,
+                thisPlayer.interactionManager.getGameMode(),
+                otherPlayer.interactionManager.getGameMode(),
+                vanishEnabled && thisPlayerWorld.advOnlySeesSrv()
         );
     }
 

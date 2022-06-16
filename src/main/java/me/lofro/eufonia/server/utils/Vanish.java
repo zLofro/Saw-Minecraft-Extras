@@ -1,7 +1,7 @@
 package me.lofro.eufonia.server.utils;
 
 import me.lofro.eufonia.server.game.interfaces.IPlayer;
-import me.lofro.eufonia.server.game.interfaces.IThreadedAnvilChunkStorage;
+import me.lofro.eufonia.server.mixins.IThreadedAnvilChunkStorage;
 import me.lofro.eufonia.server.game.interfaces.IWorld;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -14,12 +14,15 @@ public class Vanish {
     public static void hide(ServerPlayerEntity hideThis, ServerPlayerEntity otherPlayer) {
         if (((IPlayer) otherPlayer).canSeeOtherPlayer(hideThis)) return;
 
+        hide0(hideThis, otherPlayer);
+    }
+    private static void hide0(ServerPlayerEntity hideThis, ServerPlayerEntity otherPlayer) {
         var tracker = otherPlayer.getWorld().getChunkManager().threadedAnvilChunkStorage;
 
         var entityTracker = ((IThreadedAnvilChunkStorage) tracker).getEntityTrackers().get(hideThis.getId());
 
         if (entityTracker != null) {
-            entityTracker.stopTracking0(otherPlayer);
+            entityTracker.stopTrackingPlayer(otherPlayer);
         }
 
         otherPlayer.networkHandler.sendPacket(new PlayerListS2CPacket(PlayerListS2CPacket.Action.REMOVE_PLAYER, hideThis));
@@ -28,6 +31,9 @@ public class Vanish {
     public static void show(ServerPlayerEntity showThis, ServerPlayerEntity otherPlayer) {
         if (!((IPlayer) otherPlayer).canSeeOtherPlayer(showThis)) return;
 
+        show0(showThis, otherPlayer);
+    }
+    private static void show0(ServerPlayerEntity showThis, ServerPlayerEntity otherPlayer) {
         otherPlayer.networkHandler.sendPacket(new PlayerListS2CPacket(PlayerListS2CPacket.Action.ADD_PLAYER, showThis));
 
         var tracker = otherPlayer.getWorld().getChunkManager().threadedAnvilChunkStorage;
@@ -35,8 +41,13 @@ public class Vanish {
         var entityTracker = ((IThreadedAnvilChunkStorage) tracker).getEntityTrackers().get(showThis.getId());
 
         if (entityTracker!= null && !entityTracker.getListeners().contains(otherPlayer.networkHandler)) {
-            entityTracker.updateTrackingStatus0(otherPlayer);
+            entityTracker.updateTrackingStatusOfPlayer(otherPlayer);
         }
+    }
+
+    private static void forceReshow(ServerPlayerEntity showThis, ServerPlayerEntity otherPlayer) {
+        hide0(showThis, otherPlayer);
+        show0(showThis, otherPlayer);
     }
 
     public static void updatePlayer(ServerPlayerEntity player, IWorld prevWorld) {
@@ -55,16 +66,16 @@ public class Vanish {
             GameMode pGameMode = p.interactionManager.getGameMode();
 
             if (IPlayer.canSeeOtherPlayer(playerEnabled, prevGameMode, pGameMode, playerEnabledAdvOnlySeesSrv)) {
-                Vanish.hide(p, player);
+                hide(p, player);
             } else {
-                Vanish.show(p, player);
+                show(p, player);
             }
 
             IWorld pWorld = (IWorld) p.getWorld();
             if (IPlayer.canSeeOtherPlayer(pWorld.vanishEnabled(), pGameMode, prevGameMode, pWorld.advOnlySeesSrv())) {
-                Vanish.hide(player, p);
+                hide(player, p);
             } else {
-                Vanish.show(player, p);
+                show(player, p);
             }
         };
     }
@@ -78,16 +89,16 @@ public class Vanish {
             GameMode pGameMode = p.interactionManager.getGameMode();
 
             if (IPlayer.canSeeOtherPlayer(prevPlayerEnabled, playerGameMode, pGameMode, prevPlayerEnabledAdvOnlySeesSrv)) {
-                Vanish.hide(p, player);
+                hide(p, player);
             } else {
-                Vanish.show(p, player);
+                forceReshow(p, player);
             }
 
             IWorld pWorld = (IWorld) p.getWorld();
             if (IPlayer.canSeeOtherPlayer(pWorld.vanishEnabled(), pGameMode, playerGameMode, pWorld.advOnlySeesSrv())) {
-                Vanish.hide(player, p);
+                hide(player, p);
             } else {
-                Vanish.show(player, p);
+                show(player, p);
             }
         };
     }

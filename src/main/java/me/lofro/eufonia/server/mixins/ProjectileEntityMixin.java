@@ -12,22 +12,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ProjectileEntity.class)
 public class ProjectileEntityMixin {
-
     @Shadow private boolean leftOwner;
 
     @Inject(method = "canHit", at = @At("HEAD"), cancellable = true)
     public void handleCanHitVanish(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (!entity.isSpectator() && entity.isAlive() && entity.collides()) {
-            Entity entity2 = ((ProjectileEntity)(Object) this).getOwner();
-
-            if (entity2 instanceof ServerPlayerEntity && entity instanceof ServerPlayerEntity) {
-                if (!((IPlayer)entity2).canSeeOtherPlayer(entity)) cir.setReturnValue(false);
-            }
-
-            cir.setReturnValue(entity2 == null || leftOwner || !entity2.isConnectedThroughVehicle(entity));
-        } else {
+        if (entity.isSpectator() || !entity.isAlive() || !entity.collides()) {
             cir.setReturnValue(false);
+            cir.cancel();
+            return;
         }
+
+        Entity owner = ((ProjectileEntity)(Object) this).getOwner();
+
+        cir.setReturnValue(
+            (
+                !(owner instanceof ServerPlayerEntity) || !(entity instanceof ServerPlayerEntity) ||
+                ((IPlayer) owner).canSeeOtherPlayer((ServerPlayerEntity) entity)
+            ) &&
+            (
+                owner == null || leftOwner || !owner.isConnectedThroughVehicle(entity))
+            );
+        cir.cancel();
     }
 
     //TODO CAMBIAR MAPAS.

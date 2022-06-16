@@ -12,7 +12,7 @@
     "ServerPlayerInteractionManagerMixin",
     "ServerPlayNetworkHandlerMixin",
     "ServerWorldMixin",
-    "ThreadedAnvilChunkStorageMixin"
+    "IThreadedAnvilChunkStorage"
   ],
   "client": [
   ],

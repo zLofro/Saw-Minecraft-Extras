@@ -1,8 +1,12 @@
 package me.lofro.eufonia.server.mixins;
 
 import me.lofro.eufonia.server.events.ServerPlayerConnectionEvents;
+import me.lofro.eufonia.server.game.interfaces.INetworkHandler;
+import me.lofro.eufonia.server.game.interfaces.IPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.MessageType;
+import net.minecraft.network.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -10,6 +14,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -19,7 +24,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Mixin(ServerPlayNetworkHandler.class)
-public class ServerPlayNetworkHandlerMixin {
+public abstract class ServerPlayNetworkHandlerMixin implements INetworkHandler {
 
     // Only sends the "multiplayer.player.left" message to OPS.
     @Redirect(method = "onDisconnected",at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V"))
@@ -46,9 +51,16 @@ public class ServerPlayNetworkHandlerMixin {
         });
     }
 
+
+    @Shadow public ServerPlayerEntity player;
+    @Shadow public abstract void sendPacket(Packet<?> packet);
+    @Override
+    public void sendPacket(Packet<?> packet, Entity ifSees) {
+        if (((IPlayer) player).canSeeOtherPlayer(ifSees)) sendPacket(packet);
+    }
+
     @Inject(method = "<init>", at = @At("TAIL"))
     public void triggerPlayerJoinEvent(MinecraftServer server, ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         ServerPlayerConnectionEvents.OnServerPlayerConnect.EVENT.invoker().connect(player, server);
     }
-
 }

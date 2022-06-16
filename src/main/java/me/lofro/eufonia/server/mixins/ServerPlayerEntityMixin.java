@@ -3,14 +3,19 @@ package me.lofro.eufonia.server.mixins;
 import me.lofro.eufonia.server.game.interfaces.IPlayer;
 import me.lofro.eufonia.server.game.interfaces.IWorld;
 import me.lofro.eufonia.server.utils.Vanish;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerPlayerEntity.class)
-public class ServerPlayerEntityMixin implements IPlayer {
+public abstract class ServerPlayerEntityMixin implements IPlayer {
+    @Shadow @Final public MinecraftServer server;
+
     public boolean canSeeOtherPlayer(ServerPlayerEntity otherPlayer) {
         return IPlayer.canSeeOtherPlayer((ServerPlayerEntity)(Object) this, otherPlayer);
     }

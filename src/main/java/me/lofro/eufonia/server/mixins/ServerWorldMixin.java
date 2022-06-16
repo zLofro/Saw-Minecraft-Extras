@@ -1,13 +1,10 @@
 package me.lofro.eufonia.server.mixins;
 
-import me.lofro.eufonia.SawExtras;
-import me.lofro.eufonia.server.game.interfaces.IPlayer;
+import me.lofro.eufonia.server.game.interfaces.INetworkHandler;
 import me.lofro.eufonia.server.game.interfaces.IWorld;
-import me.lofro.eufonia.server.utils.Vanish;
 import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.RegistryEntry;
@@ -76,12 +73,8 @@ public class ServerWorldMixin implements IWorld {
                 double e = (double)pos.getY() - p.getY();
                 double f = (double)pos.getZ() - p.getZ();
 
-                if (entityHuman != null && !((IPlayer)p).canSeeOtherPlayer(entityHuman)) {
-                    return;
-                }
-
                 if (d * d + e * e + f * f < 1024.0D) {
-                    p.networkHandler.sendPacket(new BlockBreakingProgressS2CPacket(entityId, pos, progress));
+                    ((INetworkHandler) p.networkHandler).sendPacket(new BlockBreakingProgressS2CPacket(entityId, pos, progress), entityHuman);
                 }
             }
         });
