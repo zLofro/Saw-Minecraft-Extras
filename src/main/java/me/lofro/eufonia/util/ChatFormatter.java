@@ -1,4 +1,4 @@
-package me.lofro.eufonia.global.utils;
+package me.lofro.eufonia.util;
 
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;

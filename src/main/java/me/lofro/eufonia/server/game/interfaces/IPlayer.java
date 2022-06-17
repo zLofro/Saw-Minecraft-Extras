@@ -1,8 +1,8 @@
 package me.lofro.eufonia.server.game.interfaces;
 
+import me.lofro.eufonia.SawExtras;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.world.GameMode;
 
 public interface IPlayer {
@@ -34,7 +34,7 @@ public interface IPlayer {
      * is able to see the second person {@code otherPlayer} (whose game mode is {@code otherG})
      */
     static boolean canSeeOtherPlayer(boolean vanishEnabled, GameMode thisG, GameMode otherG, boolean advOnlySeesSrv) {
-        return !vanishEnabled || thisG == GameMode.CREATIVE || switch (otherG) {
+        return SawExtras.INSTANCE.config().DISABLE_VANISH() || !vanishEnabled || thisG == GameMode.CREATIVE || switch (otherG) {
             case SURVIVAL -> true;
             case ADVENTURE -> thisG != GameMode.ADVENTURE || !advOnlySeesSrv;
             default -> false;
