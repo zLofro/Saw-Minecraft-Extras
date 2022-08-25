@@ -20,7 +20,6 @@ public interface IPlayer {
         );
     }
 
-
     /**
      * <p>We define see* as the possibility for a player to know another player exists.
      * This involves physically seeing the player, but also hearing sounds coming from them,

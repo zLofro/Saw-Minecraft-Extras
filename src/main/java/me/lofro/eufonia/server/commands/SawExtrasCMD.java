@@ -18,7 +18,7 @@ public class SawExtrasCMD {
 
         literalArgumentBuilder
                 .then(CommandManager.literal("saturation")
-                        .then(CommandManager.literal("add")
+                        .then(CommandManager.literal("set")
                                 .then(CommandManager.argument("player", EntityArgumentType.players())
                                         .then(CommandManager.argument("level", IntegerArgumentType.integer())
                                                 .executes(context ->
@@ -32,15 +32,15 @@ public class SawExtrasCMD {
         try {
             players.forEach(player -> {
                 player.getHungerManager().setSaturationLevel(level);
-                player.getHungerManager().setSaturationLevel(level);
+                player.getHungerManager().setFoodLevel(level);
 
-                if (players.size() < 1) {
-                    commandContext.getSource().sendFeedback(ChatFormatter.stringFormatWithPrefixToText("&7La saturación del jugador &6" + player.getName().asString() + " &7ha sido modificada correctamente."), true);
+                if (players.size() < 2) {
+                    commandContext.getSource().sendFeedback(ChatFormatter.stringFormatWithPrefixToText("&7La saturación del jugador &6" + player.getName().asString() + " &7ha sido modificada correctamente a &6" + level + "&7."), true);
                 }
             });
 
             if (players.size() > 1) {
-                commandContext.getSource().sendFeedback(ChatFormatter.stringFormatWithPrefixToText("&7La saturación de &6" + players.size() + " &7jugadores ha sido modificada correctamente."), true);
+                commandContext.getSource().sendFeedback(ChatFormatter.stringFormatWithPrefixToText("&7La saturación de &6" + players.size() + " &7jugadores ha sido modificada correctamente a &6" + level + "&7."), true);
             }
 
             return 1;
@@ -49,4 +49,5 @@ public class SawExtrasCMD {
             return -1;
         }
     }
+
 }

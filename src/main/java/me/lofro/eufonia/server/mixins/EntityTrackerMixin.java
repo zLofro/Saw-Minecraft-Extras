@@ -15,6 +15,7 @@ import java.util.Set;
 
 @Mixin(targets = "net.minecraft.server.world.ThreadedAnvilChunkStorage$EntityTracker")
 public abstract class EntityTrackerMixin implements IEntityTracker {
+
     @Shadow @Final private Set<EntityTrackingListener> listeners;
     @Shadow public abstract void stopTracking(ServerPlayerEntity player);
     @Shadow public abstract void updateTrackedStatus(ServerPlayerEntity player);

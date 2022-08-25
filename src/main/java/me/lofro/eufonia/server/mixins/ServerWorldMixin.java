@@ -29,30 +29,21 @@ import java.util.concurrent.Executor;
 public class ServerWorldMixin implements IWorld {
 
     private boolean vanishEnabled;
+
     @Override
     public boolean vanishEnabled() {
         return vanishEnabled;
     }
+
     private boolean advOnlySeesSrv;
+
     @Override
     public boolean advOnlySeesSrv() {
         return advOnlySeesSrv;
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void ServerWorld_newInstance(MinecraftServer server,
-                                        Executor workerExecutor,
-                                        LevelStorage.Session session,
-                                        ServerWorldProperties properties,
-                                        RegistryKey<World> worldKey,
-                                        RegistryEntry<DimensionType> registryEntry,
-                                        WorldGenerationProgressListener worldGenerationProgressListener,
-                                        ChunkGenerator chunkGenerator,
-                                        boolean debugWorld,
-                                        long seed,
-                                        List<Spawner> spawners,
-                                        boolean shouldTickTime,
-                                        CallbackInfo ci) {
+    public void ServerWorld_newInstance(MinecraftServer server, Executor workerExecutor, LevelStorage.Session session, ServerWorldProperties properties, RegistryKey<World> worldKey, RegistryEntry<DimensionType> registryEntry, WorldGenerationProgressListener worldGenerationProgressListener, ChunkGenerator chunkGenerator, boolean debugWorld, long seed, List<Spawner> spawners, boolean shouldTickTime, CallbackInfo ci) {
         String worldName = ((ServerWorld) (Object) this).getRegistryKey().getValue().toUnderscoreSeparatedString();
         vanishEnabled = IWorld.vanishEnabled(worldName);
         advOnlySeesSrv = IWorld.advOnlySeesSrv(worldName);

@@ -51,9 +51,9 @@ public abstract class ServerPlayNetworkHandlerMixin implements INetworkHandler {
         });
     }
 
-
     @Shadow public ServerPlayerEntity player;
     @Shadow public abstract void sendPacket(Packet<?> packet);
+
     @Override
     public void sendPacket(Packet<?> packet, Entity ifSees) {
         if (((IPlayer) player).canSeeOtherPlayer(ifSees)) sendPacket(packet);

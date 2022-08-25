@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
+
     @Shadow @Final private List<ServerPlayerEntity> players;
     @Shadow private int latencyUpdateTimer;
 
@@ -39,14 +40,7 @@ public class PlayerManagerMixin {
     }
 
     @Inject(method = "sendToAround", at = @At("HEAD"), cancellable = true)
-    public void addVanishImplementation(PlayerEntity player,
-                                        double x,
-                                        double y,
-                                        double z,
-                                        double distance,
-                                        RegistryKey<World> worldKey,
-                                        Packet<?> packet,
-                                        CallbackInfo ci) {
+    public void addVanishImplementation(PlayerEntity player, double x, double y, double z, double distance, RegistryKey<World> worldKey, Packet<?> packet, CallbackInfo ci) {
         players.stream().filter(p -> p != player && p.world.getRegistryKey() == worldKey).forEach(p -> {
             double d = x - p.getX();
             double e = y - p.getY();
